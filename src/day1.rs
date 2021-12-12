@@ -1,10 +1,10 @@
-use std::fs::read_to_string;
+use crate::Error;
 use nom::bytes::complete::tag;
 use nom::character::complete::digit1;
 use nom::combinator::{map_res, recognize};
-use nom::IResult;
 use nom::multi::many0;
-use crate::Error;
+use nom::IResult;
+use std::fs::read_to_string;
 
 pub fn calculate() -> Result<(String, String), Error> {
     let input = parse_input(&read_to_string("input/day1")?)?;
@@ -12,7 +12,7 @@ pub fn calculate() -> Result<(String, String), Error> {
     Ok((part1(&input)?, part2(&input)?))
 }
 
-fn my_u64(input : &str) -> IResult<&str, u32> {
+fn my_u64(input: &str) -> IResult<&str, u32> {
     let (rest, data) = map_res(recognize(digit1), str::parse)(input)?;
     let (rest, _) = tag("\n")(rest)?;
 
@@ -35,7 +35,7 @@ fn part1(input: &[u32]) -> Result<String, Error> {
 
     for val in input {
         match previous {
-            None => { },
+            None => {}
             Some(old) => {
                 if val > old {
                     num_increases += 1;
@@ -58,7 +58,7 @@ fn part2(input: &[u32]) -> Result<String, Error> {
         }
 
         match previous {
-            None => { },
+            None => {}
             Some(old) => {
                 if input[i - 2] + input[i - 1] + input[i] > old {
                     num_increases += 1;
@@ -73,7 +73,8 @@ fn part2(input: &[u32]) -> Result<String, Error> {
 
 #[test]
 pub fn test_parse() {
-    let res = parse_input("199
+    let res = parse_input(
+        "199
 200
 208
 210
@@ -83,18 +84,27 @@ pub fn test_parse() {
 269
 260
 263
-");
+",
+    );
 
-    assert_eq!(vec![199,200,208,210,200,207,240,269,260,263], res.unwrap());
+    assert_eq!(
+        vec![199, 200, 208, 210, 200, 207, 240, 269, 260, 263],
+        res.unwrap()
+    );
 }
 
 #[test]
 pub fn test_part1() {
-    assert_eq!("7", part1(&vec![199,200,208,210,200,207,240,269,260,263]).unwrap());
+    assert_eq!(
+        "7",
+        part1(&vec![199, 200, 208, 210, 200, 207, 240, 269, 260, 263]).unwrap()
+    );
 }
-
 
 #[test]
 pub fn test_part2() {
-    assert_eq!("4", part2(&vec![199,200,208,210,200,207,240,269,260,263]).unwrap());
+    assert_eq!(
+        "4",
+        part2(&vec![199, 200, 208, 210, 200, 207, 240, 269, 260, 263]).unwrap()
+    );
 }

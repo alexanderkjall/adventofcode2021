@@ -9,7 +9,7 @@ mod day3;
 pub enum Error {
     Generic(&'static str),
     GenericDyn(String),
-    IO(std::io::Error)
+    IO(std::io::Error),
 }
 
 impl From<std::io::Error> for Error {
@@ -25,10 +25,13 @@ impl From<nom::Err<nom::error::Error<&str>>> for Error {
 }
 
 #[derive(Parser)]
-#[clap(version = "1.0", author = "Alexander Kjäll <alexander.kjall@gmail.com>")]
+#[clap(
+    version = "1.0",
+    author = "Alexander Kjäll <alexander.kjall@gmail.com>"
+)]
 struct Arguments {
     #[clap(short, long)]
-    day: u8
+    day: u8,
 }
 
 fn main() {
@@ -38,7 +41,7 @@ fn main() {
         1 => day1::calculate(),
         2 => day2::calculate(),
         3 => day3::calculate(),
-        _ => Err(Error::Generic("illegal day"))
+        _ => Err(Error::Generic("illegal day")),
     };
 
     match res {

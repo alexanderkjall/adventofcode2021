@@ -1,11 +1,11 @@
-use std::fs::read_to_string;
+use crate::Error;
 use gmp::mpz::Mpz;
 use nom::bytes::complete::tag;
 use nom::character::complete::digit1;
 use nom::combinator::{map, recognize};
-use nom::IResult;
 use nom::multi::many0;
-use crate::Error;
+use nom::IResult;
+use std::fs::read_to_string;
 
 pub fn calculate() -> Result<(String, String), Error> {
     let input = parse_input(&read_to_string("input/day3")?)?;
@@ -14,10 +14,10 @@ pub fn calculate() -> Result<(String, String), Error> {
 }
 
 fn from_binary(input: &str) -> Vec<char> {
-  input.chars().collect()
+    input.chars().collect()
 }
 
-fn my_u64(input : &str) -> IResult<&str, Vec<char>> {
+fn my_u64(input: &str) -> IResult<&str, Vec<char>> {
     let (rest, data) = map(recognize(digit1), from_binary)(input)?;
     let (rest, _) = tag("\n")(rest)?;
 
@@ -38,7 +38,13 @@ fn parse_input(input: &str) -> Result<(Vec<(Mpz, usize)>, usize), Error> {
         }
     }
 
-    Ok((transposed.iter().map(|s| (gmp::mpz::Mpz::from_str_radix(s, 2).unwrap(), s.len())).collect(), transposed.len()))
+    Ok((
+        transposed
+            .iter()
+            .map(|s| (gmp::mpz::Mpz::from_str_radix(s, 2).unwrap(), s.len()))
+            .collect(),
+        transposed.len(),
+    ))
 }
 
 fn part1(input: &(&[(Mpz, usize)], usize)) -> Result<String, Error> {
@@ -61,7 +67,8 @@ fn part2(_input: &(&[(Mpz, usize)], usize)) -> Result<String, Error> {
 
 #[test]
 pub fn test_parse() {
-    let res = parse_input("00100
+    let res = parse_input(
+        "00100
 11110
 10110
 10111
@@ -73,14 +80,38 @@ pub fn test_parse() {
 11001
 00010
 01010
-");
+",
+    );
 
-    assert_eq!((vec![(Mpz::from(1948), 12), (Mpz::from(1109), 12), (Mpz::from(4080), 12), (Mpz::from(1891), 12), (Mpz::from(484), 12)], 5),
-                    res.unwrap());
+    assert_eq!(
+        (
+            vec![
+                (Mpz::from(1948), 12),
+                (Mpz::from(1109), 12),
+                (Mpz::from(4080), 12),
+                (Mpz::from(1891), 12),
+                (Mpz::from(484), 12)
+            ],
+            5
+        ),
+        res.unwrap()
+    );
 }
 
 #[test]
 pub fn test_part1() {
-    assert_eq!("198",
-        part1(&(&vec![(Mpz::from(1948), 12), (Mpz::from(1109), 12), (Mpz::from(4080), 12), (Mpz::from(1891), 12), (Mpz::from(484), 12)], 5)).unwrap());
+    assert_eq!(
+        "198",
+        part1(&(
+            &vec![
+                (Mpz::from(1948), 12),
+                (Mpz::from(1109), 12),
+                (Mpz::from(4080), 12),
+                (Mpz::from(1891), 12),
+                (Mpz::from(484), 12)
+            ],
+            5
+        ))
+        .unwrap()
+    );
 }

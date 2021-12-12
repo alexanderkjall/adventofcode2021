@@ -19,7 +19,6 @@ fn my_u64(input : &str) -> IResult<&str, u32> {
     Ok((rest, data))
 }
 
-
 fn multi(i: &str) -> IResult<&str, Vec<u32>> {
     many0(my_u64)(i)
 }

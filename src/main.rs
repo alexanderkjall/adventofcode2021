@@ -2,6 +2,7 @@ use clap::Parser;
 use nom::Err;
 
 mod day1;
+mod day2;
 
 #[derive(Debug)]
 pub enum Error {
@@ -34,6 +35,7 @@ fn main() {
 
     let res = match args.day {
         1 => day1::calculate(),
+        2 => day2::calculate(),
         _ => Err(Error::Generic("illegal day"))
     };
 

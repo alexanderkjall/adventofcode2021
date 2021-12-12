@@ -9,7 +9,7 @@ use crate::Error;
 pub fn calculate() -> Result<(String, String), Error> {
     let input = parse_input(&read_to_string("input/day1")?)?;
 
-    Ok((part1(&input)?, part2()?))
+    Ok((part1(&input)?, part2(&input)?))
 }
 
 fn my_u64(input : &str) -> IResult<&str, u32> {
@@ -31,26 +31,45 @@ fn parse_input(input: &str) -> Result<Vec<u32>, Error> {
 }
 
 fn part1(input: &[u32]) -> Result<String, Error> {
-    let mut max = None;
+    let mut previous = None;
     let mut num_increases = 0;
 
-    for i in input {
-        match max {
+    for val in input {
+        match previous {
             None => { },
             Some(old) => {
-                if i > old {
+                if val > old {
                     num_increases += 1;
                 }
             }
         }
-        max = Some(i)
+        previous = Some(val)
     }
 
     Ok(format!("{}", num_increases))
 }
 
-fn part2() -> Result<String, Error> {
-    Ok("".to_owned())
+fn part2(input: &[u32]) -> Result<String, Error> {
+    let mut previous = None;
+    let mut num_increases = 0;
+
+    for (i, _) in input.iter().enumerate() {
+        if i < 3 {
+            continue;
+        }
+
+        match previous {
+            None => { },
+            Some(old) => {
+                if input[i - 2] + input[i - 1] + input[i] > old {
+                    num_increases += 1;
+                }
+            }
+        }
+        previous = Some(input[i - 2] + input[i - 1] + input[i])
+    }
+
+    Ok(format!("{}", num_increases))
 }
 
 #[test]
@@ -73,4 +92,10 @@ pub fn test_parse() {
 #[test]
 pub fn test_part1() {
     assert_eq!("7", part1(&vec![199,200,208,210,200,207,240,269,260,263]).unwrap());
+}
+
+
+#[test]
+pub fn test_part2() {
+    assert_eq!("4", part2(&vec![199,200,208,210,200,207,240,269,260,263]).unwrap());
 }

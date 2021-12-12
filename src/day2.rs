@@ -60,8 +60,13 @@ fn part1(input: &[(i32, i32)]) -> Result<String, Error> {
     Ok(format!("{}", sum.0.abs() * sum.1.abs()))
 }
 
-fn part2(_input: &[(i32, i32)]) -> Result<String, Error> {
-    Ok(format!(""))
+fn part2(input: &[(i32, i32)]) -> Result<String, Error> {
+    let sum = input.iter().fold((0i32, 0i32, 0i32), |sum, val| {
+        let aim = sum.2 + val.1;
+        (sum.0 + val.0, sum.1 + (aim * val.0), aim)
+    });
+
+    Ok(format!("{}", sum.0.abs() * sum.1.abs()))
 }
 
 #[test]
@@ -80,4 +85,9 @@ forward 2
 #[test]
 pub fn test_part1() {
     assert_eq!("150", part1(&vec![(5, 0), (0, -5), (8, 0), (0, 3), (0, -8), (2, 0)]).unwrap());
+}
+
+#[test]
+pub fn test_part2() {
+    assert_eq!("900", part2(&vec![(5, 0), (0, -5), (8, 0), (0, 3), (0, -8), (2, 0)]).unwrap());
 }

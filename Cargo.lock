@@ -8,6 +8,7 @@ version = "0.1.0"
 dependencies = [
  "clap",
  "nom",
+ "rust-gmp",
 ]
 
 [[package]]
@@ -134,6 +135,24 @@ dependencies = [
 ]
 
 [[package]]
+name = "num-traits"
+version = "0.1.43"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "92e5113e9fd4cc14ded8e499429f396a20f98c772a47cc8622a736e1ec843c31"
+dependencies = [
+ "num-traits 0.2.14",
+]
+
+[[package]]
+name = "num-traits"
+version = "0.2.14"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9a64b1ec5cda2586e284722486d802acf1f7dbdc623e2bfc57e65ca1cd099290"
+dependencies = [
+ "autocfg",
+]
+
+[[package]]
 name = "os_str_bytes"
 version = "4.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -182,6 +201,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "38bc8cc6a5f2e3655e0899c1b848643b2562f853f114bfec7be120678e3ace05"
 dependencies = [
  "proc-macro2",
+]
+
+[[package]]
+name = "rust-gmp"
+version = "0.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c3ddf28998d5730b96a9fe188557953de503d77ff403ae175ad1417921e5d906"
+dependencies = [
+ "libc",
+ "num-traits 0.1.43",
 ]
 
 [[package]]

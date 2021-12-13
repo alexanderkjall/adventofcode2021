@@ -24,6 +24,12 @@ impl From<nom::Err<nom::error::Error<&str>>> for Error {
     }
 }
 
+impl From<std::num::ParseIntError> for Error {
+    fn from(err: std::num::ParseIntError) -> Self {
+        Error::GenericDyn(format!("{:?}", err))
+    }
+}
+
 #[derive(Parser)]
 #[clap(
     version = "1.0",

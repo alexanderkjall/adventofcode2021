@@ -87,19 +87,21 @@ fn part2(input: &[u32], width: usize) -> Result<String, Error> {
     let mut rows: Vec<u32> = input.to_vec();
     let mut o2_generator = 0;
     for i in (0..width).rev() {
-        let popcount = rows.iter().filter(|num| *num & 2u32.pow(i.try_into().unwrap()) != 0).count();
+        let popcount = rows
+            .iter()
+            .filter(|num| *num & 2u32.pow(i.try_into().unwrap()) != 0)
+            .count();
         let popcount_inv = rows.len() - popcount;
-        rows = rows.iter()
+        rows = rows
+            .iter()
             .filter(|num| {
-                if popcount > popcount_inv {
-                    *num & 2u32.pow(i.try_into().unwrap()) != 0
-                } else if popcount == popcount_inv {
+                if popcount >= popcount_inv {
                     *num & 2u32.pow(i.try_into().unwrap()) != 0
                 } else {
                     *num & 2u32.pow(i.try_into().unwrap()) == 0
                 }
             })
-            .map(|n|*n)
+            .copied()
             .collect();
 
         if rows.len() == 1 {
@@ -111,19 +113,21 @@ fn part2(input: &[u32], width: usize) -> Result<String, Error> {
     let mut rows: Vec<u32> = input.to_vec();
     let mut co2_scrubber = 0;
     for i in (0..width).rev() {
-        let popcount = rows.iter().filter(|num| *num & 2u32.pow(i.try_into().unwrap()) != 0).count();
+        let popcount = rows
+            .iter()
+            .filter(|num| *num & 2u32.pow(i.try_into().unwrap()) != 0)
+            .count();
         let popcount_inv = rows.len() - popcount;
-        rows = rows.iter()
+        rows = rows
+            .iter()
             .filter(|num| {
-                if popcount > popcount_inv {
-                    *num & 2u32.pow(i.try_into().unwrap()) == 0
-                } else if popcount == popcount_inv {
+                if popcount >= popcount_inv {
                     *num & 2u32.pow(i.try_into().unwrap()) == 0
                 } else {
                     *num & 2u32.pow(i.try_into().unwrap()) != 0
                 }
             })
-            .map(|n|*n)
+            .copied()
             .collect();
 
         if rows.len() == 1 {
@@ -186,7 +190,10 @@ pub fn test_parse_input() {
 ",
     );
 
-    assert_eq!(vec![4, 30, 22, 23, 21, 15, 7, 28, 16, 25, 2, 10], res.unwrap());
+    assert_eq!(
+        vec![4, 30, 22, 23, 21, 15, 7, 28, 16, 25, 2, 10],
+        res.unwrap()
+    );
 }
 
 #[test]
@@ -207,12 +214,10 @@ pub fn test_part1() {
     );
 }
 
-
 #[test]
 pub fn test_part2() {
     assert_eq!(
         "230",
-        part2(&vec![4, 30, 22, 23, 21, 15, 7, 28, 16, 25, 2, 10], 5)
-        .unwrap()
+        part2(&vec![4, 30, 22, 23, 21, 15, 7, 28, 16, 25, 2, 10], 5).unwrap()
     );
 }

@@ -4,6 +4,7 @@ use nom::Err;
 mod day1;
 mod day2;
 mod day3;
+mod day4;
 
 #[derive(Debug)]
 pub enum Error {
@@ -47,6 +48,7 @@ fn main() {
         1 => day1::calculate(),
         2 => day2::calculate(),
         3 => day3::calculate(),
+        4 => day4::calculate(),
         _ => Err(Error::Generic("illegal day")),
     };
 

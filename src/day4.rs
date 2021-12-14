@@ -116,8 +116,27 @@ fn part1(input: &(Vec<u8>, Vec<Board>)) -> Result<String, Error> {
     Err(Error::Generic("no winner"))
 }
 
-fn part2(_input: &(Vec<u8>, Vec<Board>)) -> Result<String, Error> {
-    Ok(format!(""))
+fn part2(input: &(Vec<u8>, Vec<Board>)) -> Result<String, Error> {
+    let mut boards = input.1.clone();
+    let mut winning_boards = vec![];
+    let mut last_win = None;
+    for num in &input.0 {
+        for (i, board) in boards.iter_mut().enumerate() {
+            if winning_boards.contains(&i) {
+                continue;
+            }
+
+            if let Some(score) = board.mark_number(*num) {
+                winning_boards.push(i);
+                last_win = Some(score)
+            }
+        }
+    }
+
+    if last_win.is_some() {
+        return Ok(format!("{}", last_win.unwrap()));
+    }
+    Err(Error::Generic("no winner"))
 }
 
 #[test]
@@ -248,4 +267,41 @@ fn test_part1() {
     let res = part1(&input).unwrap();
 
     assert_eq!("4512", res);
+}
+
+#[test]
+fn test_part2() {
+    let input = (
+        vec![
+            7, 4, 9, 5, 11, 17, 23, 2, 0, 14, 21, 24, 10, 16, 13, 6, 15, 25, 12, 22, 18, 20, 8, 19,
+            3, 26, 1,
+        ],
+        vec![
+            Board {
+                numbers: [
+                    22, 13, 17, 11, 0, 8, 2, 23, 4, 24, 21, 9, 14, 16, 7, 6, 10, 3, 18, 5, 1, 12,
+                    20, 15, 19,
+                ],
+                marks: [false; 25],
+            },
+            Board {
+                numbers: [
+                    3, 15, 0, 2, 22, 9, 18, 13, 17, 5, 19, 8, 7, 25, 23, 20, 11, 10, 24, 4, 14, 21,
+                    16, 12, 6,
+                ],
+                marks: [false; 25],
+            },
+            Board {
+                numbers: [
+                    14, 21, 17, 24, 4, 10, 16, 15, 9, 19, 18, 8, 23, 26, 20, 22, 11, 13, 6, 5, 2,
+                    0, 12, 3, 7,
+                ],
+                marks: [false; 25],
+            },
+        ],
+    );
+
+    let res = part2(&input).unwrap();
+
+    assert_eq!("1924", res);
 }

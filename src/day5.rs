@@ -127,8 +127,20 @@ fn part1(input: &[Line]) -> Result<String, Error> {
     Ok(format!("{}", points.values().filter(|v| **v > 0).count()))
 }
 
-fn part2(_input: &[Line]) -> Result<String, Error> {
-    Ok(format!(""))
+fn part2(input: &[Line]) -> Result<String, Error> {
+    let mut points: HashMap<Point, u32> = HashMap::new();
+
+    input.iter().for_each(|l| {
+        l.points().for_each(|p| {
+            if let Some(v) = points.get_mut(&p) {
+                *v += 1;
+            } else {
+                points.insert(p.clone(), 0);
+            }
+        })
+    });
+
+    Ok(format!("{}", points.values().filter(|v| **v > 0).count()))
 }
 
 #[test]
@@ -367,7 +379,7 @@ pub fn test_part1() {
 #[test]
 pub fn test_part2() {
     assert_eq!(
-        "",
+        "12",
         part2(&vec![
             Line {
                 x1: 0,

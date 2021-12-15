@@ -12,7 +12,7 @@ pub fn calculate() -> Result<(String, String), Error> {
     Ok((part1(&input)?, part2(&input)?))
 }
 
-fn my_u64(input: &str) -> IResult<&str, u32> {
+fn my_u32(input: &str) -> IResult<&str, u32> {
     let (rest, data) = map_res(recognize(digit1), str::parse)(input)?;
     let (rest, _) = tag("\n")(rest)?;
 
@@ -20,7 +20,7 @@ fn my_u64(input: &str) -> IResult<&str, u32> {
 }
 
 fn multi(i: &str) -> IResult<&str, Vec<u32>> {
-    many0(my_u64)(i)
+    many0(my_u32)(i)
 }
 
 fn parse_input(input: &str) -> Result<Vec<u32>, Error> {

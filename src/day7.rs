@@ -44,8 +44,35 @@ fn part1(input: &[u32]) -> Result<String, Error> {
     Ok(format!("{}", result))
 }
 
-fn part2(_input: &[u32]) -> Result<String, Error> {
-    Ok(format!(""))
+fn cost(steps: u32) -> u32 {
+    if steps == 0 {
+        0
+    } else {
+        steps * (steps + 1) / 2
+    }
+}
+
+fn part2(input: &[u32]) -> Result<String, Error> {
+    let min_crab = input.iter().min().unwrap();
+    let max_crab = input.iter().max().unwrap();
+
+    let mut costs = vec![vec![0; input.len()]; (*max_crab + 1) as usize];
+    for i in *min_crab..=*max_crab {
+        for (crab, v) in input.iter().enumerate() {
+            costs[i as usize][crab as usize] = cost(max(v, &i) - min(v, &i));
+        }
+    }
+
+    let result: u32 = costs.iter().map(|c| c.iter().sum()).min().unwrap();
+
+    Ok(format!("{}", result))
+}
+
+#[test]
+pub fn test_cost() {
+    assert_eq!(1, cost(1));
+    assert_eq!(3, cost(2));
+    assert_eq!(6, cost(3));
 }
 
 #[test]
@@ -62,5 +89,5 @@ pub fn test_part1() {
 
 #[test]
 pub fn test_part2() {
-    assert_eq!("", part2(&vec![16, 1, 2, 0, 4, 2, 7, 1, 2, 14]).unwrap());
+    assert_eq!("168", part2(&vec![16, 1, 2, 0, 4, 2, 7, 1, 2, 14]).unwrap());
 }

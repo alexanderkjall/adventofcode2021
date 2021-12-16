@@ -8,6 +8,7 @@ mod day4;
 mod day5;
 mod day6;
 mod day7;
+mod day8;
 
 #[derive(Debug)]
 pub enum Error {
@@ -55,6 +56,7 @@ fn main() {
         5 => day5::calculate(),
         6 => day6::calculate(),
         7 => day7::calculate(),
+        8 => day8::calculate(),
         _ => Err(Error::Generic("illegal day")),
     };
 

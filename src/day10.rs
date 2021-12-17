@@ -26,7 +26,7 @@ enum Command {
 
 #[derive(PartialEq, Clone, Debug)]
 enum ValidationError {
-    Incomplete,
+    Incomplete(Vec<Command>),
     Corrupted(Command),
     StackUnderFlow,
 }
@@ -69,10 +69,10 @@ fn validate(commands: &[Command]) -> Result<(), ValidationError> {
 
     for c in commands {
         match c {
-            PushA | PushB | PushC | PushP => stack.push(c),
+            PushA | PushB | PushC | PushP => stack.push((*c).clone()),
             PopA => {
                 if let Some(val) = stack.pop() {
-                    if *val != PushA {
+                    if val != PushA {
                         return Err(ValidationError::Corrupted(PopA));
                     }
                 } else {
@@ -81,7 +81,7 @@ fn validate(commands: &[Command]) -> Result<(), ValidationError> {
             }
             PopB => {
                 if let Some(val) = stack.pop() {
-                    if *val != PushB {
+                    if val != PushB {
                         return Err(ValidationError::Corrupted(PopB));
                     }
                 } else {
@@ -90,7 +90,7 @@ fn validate(commands: &[Command]) -> Result<(), ValidationError> {
             }
             PopC => {
                 if let Some(val) = stack.pop() {
-                    if *val != PushC {
+                    if val != PushC {
                         return Err(ValidationError::Corrupted(PopC));
                     }
                 } else {
@@ -99,7 +99,7 @@ fn validate(commands: &[Command]) -> Result<(), ValidationError> {
             }
             PopP => {
                 if let Some(val) = stack.pop() {
-                    if *val != PushP {
+                    if val != PushP {
                         return Err(ValidationError::Corrupted(PopP));
                     }
                 } else {
@@ -110,7 +110,7 @@ fn validate(commands: &[Command]) -> Result<(), ValidationError> {
     }
 
     if !stack.is_empty() {
-        Err(ValidationError::Incomplete)
+        Err(ValidationError::Incomplete(stack))
     } else {
         Ok(())
     }
@@ -132,8 +132,30 @@ fn part1(input: &[Vec<Command>]) -> Result<String, Error> {
     Ok(format!("{}", result))
 }
 
-fn part2(_input: &[Vec<Command>]) -> Result<String, Error> {
-    Ok(format!(""))
+fn score_stack(stack: &[Command]) -> u64 {
+    let mut score = 0;
+    for s in stack {
+        match s {
+            PushA => score = score * 5 + 4,
+            PushB => score = score * 5 + 2,
+            PushC => score = score * 5 + 3,
+            PushP => score = score * 5 + 1,
+            _ => {}
+        }
+    }
+    score
+}
+
+fn part2(input: &[Vec<Command>]) -> Result<String, Error> {
+    let mut result = vec![];
+    for c in input {
+        if let Err(ValidationError::Incomplete(stack)) = validate(c) {
+            let stack: Vec<Command> = stack.into_iter().rev().collect();
+            result.push(score_stack(&stack));
+        }
+    }
+    result.sort_unstable();
+    Ok(format!("{}", result[result.len() / 2]))
 }
 
 #[cfg(test)]
@@ -141,6 +163,7 @@ mod tests {
     use crate::day10::parse_input;
     use crate::day10::part1;
     use crate::day10::part2;
+    use crate::day10::score_stack;
     use crate::day10::validate;
     use crate::day10::Command;
     use crate::day10::Command::*;
@@ -234,12 +257,39 @@ mod tests {
     }
 
     #[test]
+    pub fn test_score_stack() {
+        assert_eq!(
+            288957,
+            score_stack(&vec![
+                PushC, PushC, PushB, PushB, PushP, PushC, PushP, PushB
+            ])
+        );
+        assert_eq!(
+            5566,
+            score_stack(&vec![PushP, PushC, PushA, PushB, PushC, PushP])
+        );
+        assert_eq!(
+            1480781,
+            score_stack(&vec![
+                PushC, PushC, PushA, PushC, PushA, PushP, PushP, PushP, PushP
+            ])
+        );
+        assert_eq!(
+            995444,
+            score_stack(&vec![
+                PushB, PushB, PushC, PushC, PushB, PushC, PushB, PushC, PushA
+            ])
+        );
+        assert_eq!(294, score_stack(&vec![PushB, PushP, PushC, PushA]));
+    }
+
+    #[test]
     pub fn test_part1() {
         assert_eq!("26397", part1(&test_input()).unwrap());
     }
 
     #[test]
     pub fn test_part2() {
-        assert_eq!("", part2(&test_input()).unwrap());
+        assert_eq!("288957", part2(&test_input()).unwrap());
     }
 }

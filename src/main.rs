@@ -2,6 +2,7 @@ use clap::Parser;
 use nom::Err;
 
 mod day1;
+mod day10;
 mod day2;
 mod day3;
 mod day4;
@@ -59,6 +60,7 @@ fn main() {
         7 => day7::calculate(),
         8 => day8::calculate(),
         9 => day9::calculate(),
+        10 => day10::calculate(),
         _ => Err(Error::Generic("illegal day")),
     };
 

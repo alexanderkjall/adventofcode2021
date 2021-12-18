@@ -4,6 +4,7 @@ use nom::Err;
 mod day1;
 mod day10;
 mod day11;
+mod day12;
 mod day2;
 mod day3;
 mod day4;
@@ -63,6 +64,7 @@ fn main() {
         9 => day9::calculate(),
         10 => day10::calculate(),
         11 => day11::calculate(),
+        12 => day12::calculate(),
         _ => Err(Error::Generic("illegal day")),
     };
 

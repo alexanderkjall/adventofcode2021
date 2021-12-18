@@ -135,12 +135,83 @@ impl Graph {
         paths
     }
 
+    fn next_step_with_repeat(
+        &self,
+        pos: usize,
+        repeat: bool,
+        mut path: Vec<usize>,
+    ) -> Vec<Vec<usize>> {
+        let room = &self.nodes[pos];
+
+        let mut paths = vec![];
+        match room {
+            Room::Start => {
+                if !path.is_empty() {
+                    return vec![];
+                }
+                path.push(pos);
+                for n in self.neighbours(pos) {
+                    let p = self.next_step_with_repeat(n, repeat, path.clone());
+                    if !p.is_empty() {
+                        paths.extend_from_slice(&p);
+                    }
+                }
+            }
+            Room::End => {
+                path.push(pos);
+                paths.push(path);
+            }
+            Room::Large(_) => {
+                path.push(pos);
+                for n in self.neighbours(pos) {
+                    let p = self.next_step_with_repeat(n, repeat, path.clone());
+                    if !p.is_empty() {
+                        paths.extend_from_slice(&p);
+                    }
+                }
+            }
+            Room::Small(_) => {
+                let contains = path.contains(&pos);
+                if contains && repeat {
+                    return vec![];
+                } else if contains && !repeat {
+                    path.push(pos);
+                    for n in self.neighbours(pos) {
+                        let p = self.next_step_with_repeat(n, true, path.clone());
+                        if !p.is_empty() {
+                            paths.extend_from_slice(&p);
+                        }
+                    }
+                } else {
+                    path.push(pos);
+                    for n in self.neighbours(pos) {
+                        let p = self.next_step_with_repeat(n, repeat, path.clone());
+                        if !p.is_empty() {
+                            paths.extend_from_slice(&p);
+                        }
+                    }
+                }
+            }
+        }
+        paths
+    }
+
     fn paths(&self, from: &Room) -> Vec<Vec<usize>> {
         let f_idx = self.nodes.iter().position(|r| r == from).unwrap();
 
         let mut paths = vec![];
 
         paths.extend_from_slice(&self.next_step(f_idx, vec![]));
+
+        paths
+    }
+
+    fn paths_with_repeat(&self, from: &Room) -> Vec<Vec<usize>> {
+        let f_idx = self.nodes.iter().position(|r| r == from).unwrap();
+
+        let mut paths = vec![];
+
+        paths.extend_from_slice(&self.next_step_with_repeat(f_idx, false, vec![]));
 
         paths
     }
@@ -173,8 +244,10 @@ fn part1(input: &Graph) -> Result<String, Error> {
     Ok(format!("{}", paths.len()))
 }
 
-fn part2(_input: &Graph) -> Result<String, Error> {
-    Ok(format!(""))
+fn part2(input: &Graph) -> Result<String, Error> {
+    let paths = input.paths_with_repeat(&Room::Start);
+
+    Ok(format!("{}", paths.len()))
 }
 
 #[cfg(test)]
@@ -266,7 +339,12 @@ kj-dc
     }
 
     #[test]
-    pub fn test_part2() {
-        assert_eq!("", part2(&test_input_1()).unwrap());
+    pub fn test_part2_1() {
+        assert_eq!("36", part2(&test_input_1()).unwrap());
+    }
+
+    #[test]
+    pub fn test_part2_2() {
+        assert_eq!("103", part2(&test_input_2()).unwrap());
     }
 }

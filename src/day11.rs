@@ -105,8 +105,17 @@ fn part1(input: &[Vec<u8>]) -> Result<String, Error> {
     Ok(format!("{}", flashes))
 }
 
-fn part2(_input: &[Vec<u8>]) -> Result<String, Error> {
-    Ok(format!(""))
+fn part2(input: &[Vec<u8>]) -> Result<String, Error> {
+    let mut state: Vec<Vec<u8>> = input.to_vec();
+
+    let mut i = 0;
+    loop {
+        i += 1;
+        let flashes = step(&mut state);
+        if flashes == 100 {
+            return Ok(format!("{}", i));
+        }
+    }
 }
 
 #[cfg(test)]
@@ -193,6 +202,6 @@ mod tests {
 
     #[test]
     pub fn test_part2() {
-        assert_eq!("", part2(&test_input()).unwrap());
+        assert_eq!("195", part2(&test_input()).unwrap());
     }
 }

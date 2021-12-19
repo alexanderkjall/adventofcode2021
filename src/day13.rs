@@ -68,40 +68,70 @@ fn parse_input(input: &str) -> Result<Instructions, Error> {
     Ok(Instructions { points, folds })
 }
 
-fn part1(input: &Instructions) -> Result<String, Error> {
-    if let Some((dir, amount)) = input.folds.get(0) {
-        let mut new_points = HashSet::new();
-        for (x, y) in &input.points {
-            if *dir == Direction::X {
-                match x.cmp(amount) {
-                    Ordering::Greater => {
-                        new_points.insert((amount * 2 - *x, *y));
-                    }
-                    Ordering::Less => {
-                        new_points.insert((*x, *y));
-                    }
-                    Ordering::Equal => {}
+fn fold_points(points: &[(u32, u32)], dir: &Direction, amount: &u32) -> Vec<(u32, u32)> {
+    let mut new_points = HashSet::new();
+    for (x, y) in points {
+        if *dir == Direction::X {
+            match x.cmp(amount) {
+                Ordering::Greater => {
+                    new_points.insert((amount * 2 - *x, *y));
                 }
-            } else {
-                match y.cmp(amount) {
-                    Ordering::Greater => {
-                        new_points.insert((*x, amount * 2 - *y));
-                    }
-                    Ordering::Less => {
-                        new_points.insert((*x, *y));
-                    }
-                    Ordering::Equal => {}
+                Ordering::Less => {
+                    new_points.insert((*x, *y));
                 }
+                Ordering::Equal => {}
+            }
+        } else {
+            match y.cmp(amount) {
+                Ordering::Greater => {
+                    new_points.insert((*x, amount * 2 - *y));
+                }
+                Ordering::Less => {
+                    new_points.insert((*x, *y));
+                }
+                Ordering::Equal => {}
             }
         }
+    }
+    new_points.into_iter().collect()
+}
+
+fn plot_grid(input: &[(u32, u32)]) -> String {
+    let max_x = input.iter().map(|(x, _)| x).max().unwrap() + 2;
+    let max_y = input.iter().map(|(_, y)| y).max().unwrap() + 1;
+
+    let mut chars = vec!['.'; (max_x * max_y) as usize];
+
+    for (x, y) in input {
+        chars[(x + max_x * (y)) as usize] = '#';
+    }
+
+    for i in 0..max_y {
+        chars[((i + 1) * max_x - 1) as usize] = '\n';
+    }
+
+    chars.into_iter().collect()
+}
+
+fn part1(input: &Instructions) -> Result<String, Error> {
+    if let Some((dir, amount)) = input.folds.get(0) {
+        let new_points = fold_points(&input.points, dir, amount);
         Ok(format!("{}", new_points.len()))
     } else {
         Err(Error::Generic("no folds in input"))
     }
 }
 
-fn part2(_input: &Instructions) -> Result<String, Error> {
-    Ok(format!(""))
+fn part2(input: &Instructions) -> Result<String, Error> {
+    let mut points = input.points.clone();
+    for (dir, amount) in &input.folds {
+        let new_points = fold_points(&points, dir, amount);
+        points.resize(0, (0, 0));
+        points.extend_from_slice(&new_points);
+    }
+    let grid = plot_grid(&points);
+    //println!("{}", grid);
+    Ok(format!("\n{}", grid))
 }
 
 #[cfg(test)]
@@ -175,6 +205,9 @@ fold along x=5
 
     #[test]
     pub fn test_part2() {
-        assert_eq!("", part2(&test_input()).unwrap());
+        assert_eq!(
+            "#####\n#...#\n#...#\n#...#\n#####\n",
+            part2(&test_input()).unwrap()
+        );
     }
 }

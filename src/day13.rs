@@ -130,7 +130,7 @@ fn part2(input: &Instructions) -> Result<String, Error> {
         points.extend_from_slice(&new_points);
     }
     let grid = plot_grid(&points);
-    //println!("{}", grid);
+
     Ok(format!("\n{}", grid))
 }
 
@@ -206,7 +206,7 @@ fold along x=5
     #[test]
     pub fn test_part2() {
         assert_eq!(
-            "#####\n#...#\n#...#\n#...#\n#####\n",
+            "\n#####\n#...#\n#...#\n#...#\n#####\n",
             part2(&test_input()).unwrap()
         );
     }
